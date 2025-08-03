@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Billettautomat</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 1em;
+        background-color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Billettautomat</h1>
+    <billett-automat> </billett-automat>
+
+    <script type="module">
+      class Billet extends HTMLElement {
+        static observedAttributes = [
+          "date",
+          "type",
+          "validity",
+          "origin",
+          "destination",
+          "direction",
+          "class",
+          "price",
+          "number1",
+          "number2",
+          "number3",
+          "color",
+        ];
+
+        connectedCallback() {
+          this.shadow = this.attachShadow({ mode: "open" });
+
+          // Content container
+          this.content = document.createElement("div");
+          this.shadow.appendChild(this.content);
+
+          // Styles
+          const style = document.createElement("style");
+          style.textContent = `
+            :host {
+              --color: ${this.getAttribute("color") || "#FFC62A"};
+
+              display: block;
+              background: linear-gradient(to bottom, #fff, #fff 50%, var(--color) 50%, var(--color));
+              font-family: sans-serif;
+              padding: 0.5em 0.5em;
+            }
+
+            dl {
+              margin: 0;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+            }
+            dt {
+              clip: rect(0 0 0 0); 
+              clip-path: inset(50%);
+              height: 1px;
+              overflow: hidden;
+              position: absolute;
+              white-space: nowrap; 
+              width: 1px;
+            }
+            dd {
+              margin: 0;
+              text-align: center;
+              font-weight: bold;
+              grid-column: 1 / -1;
+            }
+
+            .date {
+              margin-block-end: 0.25em;
+            }
+            .type {
+              font-weight: normal;
+              font-size: 0.75em;
+            }
+            .validity {
+              font-weight: normal;
+              font-size: 0.75em;
+              margin-block-end: 0.75em;
+            }
+            .origin {
+              margin-block-end: 1em;
+            }
+            .destination {
+              font-size: 1.25em;
+              margin-block-end: 1em;
+            }
+            .direction {
+              margin-block-end: 1em;
+              margin-inline: 1em;
+              background: #000;
+              display: flex;
+              flex-direction: column;
+              gap: 0.25em;
+              padding: 0.25em 1em 0.675em;
+
+              span {
+                clip: rect(0 0 0 0); 
+                clip-path: inset(50%);
+                height: 1px;
+                overflow: hidden;
+                position: absolute;
+                white-space: nowrap; 
+                width: 1px;
+              }
+
+              &::before {
+                content: "⟶";
+                color: #fff;
+                line-height: 0.1;
+              }
+
+              &.destination--return {
+                padding: 0.1em 1em 0.5em;
+
+                &::after {
+                  content: "⟵";
+                  color: #fff;
+                  line-height: 0.1;
+                }
+              }
+            }
+            .class {
+              text-align: start;
+              grid-column: 1 / 2;
+            }
+            .price {
+              text-align: end;
+              grid-column: 2 / -1;
+              font-family: serif;
+              margin-block-end: 0.5em;
+
+              small {
+                display: block;
+                font-size: 0.8em;
+                letter-spacing: 0.1em;
+              }
+            }
+            .number1 {
+              text-align: start;
+              grid-column: 1 / 2;
+              font-size: 0.75em;
+            }
+            .number2 {
+              text-align: end;
+              grid-column: 2 / -1;
+              font-size: 0.75em;
+            }
+            .number3 {
+              margin-block-start: 0.5em;
+              font-size: 1.5em;
+              letter-spacing: 0.2em;
+            }
+          `;
+          this.shadow.appendChild(style);
+
+          this.render();
+        }
+
+        render() {
+          if (!this.content) {
+            return;
+          }
+
+          this.content.innerHTML = `
+            <dl>
+              <dt>Datum</dt>
+              <dd class="date">${this.getAttribute("date")}</dd>
+              <dt>Typ</dt>
+              <dd class="type">${this.getAttribute("type")}</dd>
+              <dt>Gültigkeit</dt>
+              <dd class="validity">Gültig ${this.getAttribute("validity")}</dd>
+              <dt>Abfahrtsort</dt>
+              <dd class="origin">${this.getAttribute("origin")}</dd>
+              <dt>Zielort</dt>
+              <dd class="destination">${this.getAttribute("destination")}</dd>
+              <dt>Richtung</dt>
+              <dd class="direction destination--${this.getAttribute("direction") === "Retourfahrt" ? "return" : "oneway"}">
+                <span>${this.getAttribute("direction")}</span>
+              </dd>
+              <dt>Klasse</dt>
+              <dd class="class">${this.getAttribute("class")}</dd>
+              <dt>Preis</dt>
+              <dd class="price">
+                ${this.getAttribute("price")}
+                <small>${this.getAttribute("price")}</small>
+              </dd>
+              <dt>Nummer 1</dt>
+              <dd class="number1">${this.getAttribute("number1")}</dd>
+              <dt>Nummer 2</dt>
+              <dd class="number2">${this.getAttribute("number2")}</dd>
+              <dt>Nummer 3</dt>
+              <dd class="number3">${this.getAttribute("number3")}</dd>
+            </dl>
+          `;
+        }
+
+        attributeChangedCallback() {
+          this.render();
+        }
+      }
+      customElements.define("billett-item", Billet);
+
+      class BilletAutomat extends HTMLElement {
+        #items = [];
+
+        connectedCallback() {
+          this.shadow = this.attachShadow({ mode: "open" });
+
+          this.shadow.innerHTML = `
+            <form class="form">
+              <div class="fields">
+                <div>
+                  <label for="origin">Abfahrtsort</label>
+                  <input type="text" name="origin" id="origin" required />
+                </div>
+                <div>
+                  <label for="destination">Zielort</label>
+                  <input type="text" name="destination" id="destination" required />
+                </div>
+                <div>
+                  <label for="color">Farbe</label>
+                  <input type="color" name="color" id="color" required value="#FFC62A" />
+                </div>
+                <div>
+                  <label for="price">Preis</label>
+                  <input type="number3" name="price" id="price" required />
+                </div>
+              </div>
+              <details>
+                <summary>Erweiterte Optionen</summary>
+                <div class="fields">
+                  <div>
+                    <label for="date">Datum</label>
+                    <input type="date" name="date" id="date" />
+                  </div>
+                  <fieldset>
+                    <legend>Klasse</legend>
+                    <div>
+                      <div>
+                        <input type="radio" name="class" id="class2" value="2. Kl" checked />
+                        <label for="class2">2. Klasse</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="class" id="class1" value="1. Kl" />
+                        <label for="class1">1. Klasse</label>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <legend>Richtung</legend>
+                    <div>
+                      <div>
+                        <input type="radio" name="direction" id="direction1" value="Einfache Fahrt" />
+                        <label for="direction1">Einfache Fahrt</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="direction" id="direction2" value="Retourfahrt" checked />
+                        <label for="direction2">Retourfahrt</label>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <legend>Typ</legend>
+                    <div>
+                      <div>
+                        <input type="radio" name="type" id="type1" value="1/2 Preis" checked />
+                        <label for="type1">1/2 Preis</label>
+                      </div>
+                      <div>
+                        <input type="radio" name="type" id="type2" value="1/1 Preis" />
+                        <label for="type2">1/1 Preis</label>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div>
+                    <label for="validity">Gültigkeit</label>
+                    <input type="text" name="validity" id="validity" />
+                  </div>
+                  <div>
+                    <label for="number1">ID 1</label>
+                    <input type="number3" name="number1" id="number1" />
+                  </div>
+                  <div>
+                    <label for="number3">ID 2</label>
+                    <input type="number3" name="number3" id="number3" />
+                  </div>
+                  <div>
+                    <label for="number3">Nummer</label>
+                    <input type="number3" name="number3" id="number3" />
+                  </div>
+                </div>
+              </details>
+              <button type="submit">Erstellen</button>
+            </form>
+            <ul class="items"></ul>
+          `;
+
+          // Styles
+          const style = document.createElement("style");
+          style.textContent = `
+            :host {
+              display: grid;
+              grid-template-columns: auto 20em;
+              grid-gap: 0 1em;
+            }
+            .form {
+              position: sticky;
+              top: 1em;
+              align-self: start;
+              order: 1;
+
+              .fields {
+                display: grid;
+                grid-template-columns: 7em auto;
+                grid-gap: 0.5em 1em;
+
+                > div,
+                > fieldset {
+                  display: contents;
+                }
+              }
+
+              details {
+                margin-block: 1em;
+
+                .fields {
+                  margin-block-start: 1em;
+                }
+              }
+            }
+            .items {
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+              grid-gap: 2em 1em;
+              list-style: none;
+              padding: 0;
+              margin: 0;
+
+              li {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5em;
+              }
+
+              button {
+                order: -1;
+                align-self: end;
+              }
+
+              billett-item {
+                box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
+              }
+            }
+          `;
+          this.shadow.appendChild(style);
+
+          this.items = this.shadow.querySelector(".items");
+          this.form = this.shadow.querySelector(".form");
+          this.form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(this.form);
+            const data = Object.fromEntries(formData.entries());
+
+            this.#items.unshift({
+              ...data,
+              price: parseFloat(data.price).toFixed(2).padStart(6, "0"),
+              date: data.date || new Date().toISOString().split("T")[0],
+              validity: data.validity || "1 Monat",
+              number1: data.number1 || Math.floor(Math.random() * 1000000),
+              number2: data.number3 || Math.floor(Math.random() * 10000),
+              number3: data.number3 || Math.floor(Math.random() * 10000),
+            });
+
+            this.update();
+          });
+
+          this.#items = JSON.parse(
+            localStorage.getItem("billett-automat") || "[]"
+          );
+
+          this.render();
+        }
+
+        update() {
+          localStorage.setItem("billett-automat", JSON.stringify(this.#items));
+
+          this.render();
+        }
+
+        render() {
+          if (!this.items) {
+            return;
+          }
+
+          this.items.innerHTML = "";
+
+          this.#items.forEach((item, index) => {
+            const wrapper = document.createElement("li");
+
+            const billet = document.createElement("billett-item");
+
+            for (const [key, value] of Object.entries(item)) {
+              billet.setAttribute(key, value);
+            }
+
+            wrapper.appendChild(billet);
+
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Entfernen";
+            removeButton.addEventListener("click", () =>
+              this.removeItem(index)
+            );
+
+            wrapper.appendChild(removeButton);
+
+            this.items.appendChild(wrapper);
+          });
+        }
+
+        removeItem(index) {
+          this.#items.splice(index, 1);
+
+          this.update();
+        }
+      }
+      customElements.define("billett-automat", BilletAutomat);
+    </script>
+  </body>
+</html>
