@@ -182,7 +182,11 @@
               <dt>Zielort</dt>
               <dd class="destination">${this.getAttribute("destination")}</dd>
               <dt>Richtung</dt>
-              <dd class="direction destination--${this.getAttribute("direction") === "Retourfahrt" ? "return" : "oneway"}">
+              <dd class="direction destination--${
+                this.getAttribute("direction") === "Retourfahrt"
+                  ? "return"
+                  : "oneway"
+              }">
                 <span>${this.getAttribute("direction")}</span>
               </dd>
               <dt>Klasse</dt>
@@ -301,6 +305,10 @@
               <button type="submit">Erstellen</button>
             </form>
             <ul class="items"></ul>
+            <div class="actions">
+              <button type="button" data-copy>Daten kopieren</button>
+              <button type="button" data-paste>Daten einfügen</button>
+            </div>
           `;
 
           // Styles
@@ -315,7 +323,6 @@
               position: sticky;
               top: 1em;
               align-self: start;
-              order: 1;
 
               .fields {
                 display: grid;
@@ -337,6 +344,7 @@
               }
             }
             .items {
+              order: -1;
               display: grid;
               grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
               grid-gap: 2em 1em;
@@ -359,6 +367,10 @@
               billett-item {
                 box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
               }
+            }
+            .actions {
+              grid-column: 1 / -1;
+              margin-block-start: 2em;
             }
           `;
           this.shadow.appendChild(style);
@@ -388,7 +400,32 @@
             localStorage.getItem("billett-automat") || "[]"
           );
 
+          this.shadow.addEventListener("click", this);
+
           this.render();
+        }
+
+        async handleEvent(event) {
+          if (event.target.matches("[data-copy]")) {
+            const data = JSON.stringify(this.#items, null, 2);
+
+            await navigator.clipboard.writeText(data);
+
+            alert("Daten kopiert!");
+          } else if (event.target.matches("[data-paste]")) {
+            try {
+              const data = await navigator.clipboard.readText();
+              const items = JSON.parse(data);
+
+              if (Array.isArray(items)) {
+                this.#items = [...items, ...this.#items];
+              }
+
+              this.update();
+            } catch (err) {
+              console.error(err);
+            }
+          }
         }
 
         update() {
