@@ -71,11 +71,19 @@
               font-family: sans-serif;
               padding: 0.5em 0.5em;
             }
+            .visually-hidden {
+              clip: rect(0 0 0 0);
+              clip-path: inset(50%);
+              height: 1px;
+              overflow: hidden;
+              position: absolute;
+              white-space: nowrap;
+              width: 1px;
+            }
             .content {
               flex: 1;
               display: flex;
               flex-direction: column;
-
             }
             dl {
               flex: 1;
@@ -87,15 +95,6 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
               }
-            }
-            dt {
-              clip: rect(0 0 0 0);
-              clip-path: inset(50%);
-              height: 1px;
-              overflow: hidden;
-              position: absolute;
-              white-space: nowrap;
-              width: 1px;
             }
             dd {
               margin: 0;
@@ -132,16 +131,6 @@
               flex-direction: column;
               gap: 0.25em;
               padding: 0.45em 1em;
-
-              span {
-                clip: rect(0 0 0 0);
-                clip-path: inset(50%);
-                height: 1px;
-                overflow: hidden;
-                position: absolute;
-                white-space: nowrap;
-                width: 1px;
-              }
 
               &::before {
                 content: "⟶";
@@ -205,21 +194,21 @@
           this.content.innerHTML = html`
             <dl>
               <div class="group">
-                <dt>Datum</dt>
+                <dt class="visually-hidden">Datum</dt>
                 <dd class="date">${this.getAttribute("date")}</dd>
-                <dt>Typ</dt>
+                <dt class="visually-hidden">Typ</dt>
                 <dd class="type">${this.getAttribute("type")}</dd>
-                <dt>Gültigkeit</dt>
+                <dt class="visually-hidden">Gültigkeit</dt>
                 <dd class="validity">
                   Gültig ${this.getAttribute("validity")}
                 </dd>
-                <dt>Abfahrtsort</dt>
+                <dt class="visually-hidden">Abfahrtsort</dt>
                 <dd class="origin">${this.getAttribute("origin")}</dd>
-                <dt>Zielort</dt>
+                <dt class="visually-hidden">Zielort</dt>
                 <dd class="destination">${this.getAttribute("destination")}</dd>
               </div>
               <div class="group">
-                <dt>Richtung</dt>
+                <dt class="visually-hidden">Richtung</dt>
                 <dd
                   class="direction destination--${this.getAttribute(
                     "direction"
@@ -227,20 +216,22 @@
                     ? "return"
                     : "oneway"}"
                 >
-                  <span>${this.getAttribute("direction")}</span>
+                  <span class="visually-hidden"
+                    >${this.getAttribute("direction")}</span
+                  >
                 </dd>
-                <dt>Klasse</dt>
+                <dt class="visually-hidden">Klasse</dt>
                 <dd class="class">${this.getAttribute("class")}</dd>
-                <dt>Preis</dt>
+                <dt class="visually-hidden">Preis</dt>
                 <dd class="price">
                   ${this.getAttribute("price")}
                   <small>${this.getAttribute("price")}</small>
                 </dd>
-                <dt>Nummer 1</dt>
+                <dt class="visually-hidden">Nummer 1</dt>
                 <dd class="number1">${this.getAttribute("number1")}</dd>
-                <dt>Nummer 2</dt>
+                <dt class="visually-hidden">Nummer 2</dt>
                 <dd class="number2">${this.getAttribute("number2")}</dd>
-                <dt>Nummer 3</dt>
+                <dt class="visually-hidden">Nummer 3</dt>
                 <dd class="number3">${this.getAttribute("number3")}</dd>
               </div>
             </dl>
