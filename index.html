@@ -272,140 +272,142 @@
           this.shadow = this.attachShadow({ mode: "open" });
 
           this.shadow.innerHTML = html`
-            <form class="form">
-              <input type="hidden" name="index" />
-              <div class="fields">
-                <div>
-                  <label for="origin">Abfahrtsort</label>
-                  <input type="text" name="origin" id="origin" required />
-                </div>
-                <div>
-                  <label for="destination">Zielort</label>
-                  <input
-                    type="text"
-                    name="destination"
-                    id="destination"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="color">Farbe</label>
-                  <input
-                    type="color"
-                    name="color"
-                    id="color"
-                    required
-                    value="#FFC62A"
-                  />
-                </div>
-                <div>
-                  <label for="price">Preis</label>
-                  <input type="number3" name="price" id="price" required />
-                </div>
-              </div>
-              <details>
-                <summary>Erweiterte Optionen</summary>
+            <div class="content">
+              <form class="form">
+                <input type="hidden" name="index" />
                 <div class="fields">
                   <div>
-                    <label for="date">Datum</label>
-                    <input type="date" name="date" id="date" />
-                  </div>
-                  <fieldset>
-                    <legend>Klasse</legend>
-                    <div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="class"
-                          id="class2"
-                          value="2. Kl"
-                          checked
-                        />
-                        <label for="class2">2. Klasse</label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="class"
-                          id="class1"
-                          value="1. Kl"
-                        />
-                        <label for="class1">1. Klasse</label>
-                      </div>
-                    </div>
-                  </fieldset>
-                  <fieldset>
-                    <legend>Richtung</legend>
-                    <div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="direction"
-                          id="direction1"
-                          value="Einfache Fahrt"
-                        />
-                        <label for="direction1">Einfache Fahrt</label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="direction"
-                          id="direction2"
-                          value="Retourfahrt"
-                          checked
-                        />
-                        <label for="direction2">Retourfahrt</label>
-                      </div>
-                    </div>
-                  </fieldset>
-                  <fieldset>
-                    <legend>Typ</legend>
-                    <div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="type"
-                          id="type1"
-                          value="1/2 Preis"
-                          checked
-                        />
-                        <label for="type1">1/2 Preis</label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          name="type"
-                          id="type2"
-                          value="1/1 Preis"
-                        />
-                        <label for="type2">1/1 Preis</label>
-                      </div>
-                    </div>
-                  </fieldset>
-                  <div>
-                    <label for="validity">Gültigkeit</label>
-                    <input type="text" name="validity" id="validity" />
+                    <label for="origin">Abfahrtsort</label>
+                    <input type="text" name="origin" id="origin" required />
                   </div>
                   <div>
-                    <label for="number1">Nummer 1</label>
-                    <input type="number" name="number1" id="number1" />
+                    <label for="destination">Zielort</label>
+                    <input
+                      type="text"
+                      name="destination"
+                      id="destination"
+                      required
+                    />
                   </div>
                   <div>
-                    <label for="number2">Nummer 2</label>
-                    <input type="number" name="number2" id="number2" />
+                    <label for="color">Farbe</label>
+                    <input
+                      type="color"
+                      name="color"
+                      id="color"
+                      required
+                      value="#FFC62A"
+                    />
                   </div>
                   <div>
-                    <label for="number3">Nummer 3</label>
-                    <input type="number" name="number3" id="number3" />
+                    <label for="price">Preis</label>
+                    <input type="number3" name="price" id="price" required />
                   </div>
                 </div>
-              </details>
-              <button type="submit">Erstellen</button>
-            </form>
-            <ul class="items"></ul>
-            <div class="actions">
-              <button type="button" data-copy>Daten kopieren</button>
-              <button type="button" data-paste>Daten einfügen</button>
+                <details>
+                  <summary>Erweiterte Optionen</summary>
+                  <div class="fields">
+                    <div>
+                      <label for="date">Datum</label>
+                      <input type="date" name="date" id="date" />
+                    </div>
+                    <fieldset>
+                      <legend>Klasse</legend>
+                      <div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="class"
+                            id="class2"
+                            value="2. Kl"
+                            checked
+                          />
+                          <label for="class2">2. Klasse</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="class"
+                            id="class1"
+                            value="1. Kl"
+                          />
+                          <label for="class1">1. Klasse</label>
+                        </div>
+                      </div>
+                    </fieldset>
+                    <fieldset>
+                      <legend>Richtung</legend>
+                      <div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="direction"
+                            id="direction1"
+                            value="Einfache Fahrt"
+                          />
+                          <label for="direction1">Einfache Fahrt</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="direction"
+                            id="direction2"
+                            value="Retourfahrt"
+                            checked
+                          />
+                          <label for="direction2">Retourfahrt</label>
+                        </div>
+                      </div>
+                    </fieldset>
+                    <fieldset>
+                      <legend>Typ</legend>
+                      <div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type"
+                            id="type1"
+                            value="1/2 Preis"
+                            checked
+                          />
+                          <label for="type1">1/2 Preis</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="type"
+                            id="type2"
+                            value="1/1 Preis"
+                          />
+                          <label for="type2">1/1 Preis</label>
+                        </div>
+                      </div>
+                    </fieldset>
+                    <div>
+                      <label for="validity">Gültigkeit</label>
+                      <input type="text" name="validity" id="validity" />
+                    </div>
+                    <div>
+                      <label for="number1">Nummer 1</label>
+                      <input type="number" name="number1" id="number1" />
+                    </div>
+                    <div>
+                      <label for="number2">Nummer 2</label>
+                      <input type="number" name="number2" id="number2" />
+                    </div>
+                    <div>
+                      <label for="number3">Nummer 3</label>
+                      <input type="number" name="number3" id="number3" />
+                    </div>
+                  </div>
+                </details>
+                <button type="submit">Erstellen</button>
+              </form>
+              <ul class="items"></ul>
+              <div class="actions actions--global">
+                <button type="button" data-copy>Daten kopieren</button>
+                <button type="button" data-paste>Daten einfügen</button>
+              </div>
             </div>
           `;
 
@@ -413,16 +415,31 @@
           const style = document.createElement("style");
           style.textContent = css`
             :host {
+              display: block;
+              container-type: inline-size;
+
+              @container (width > 50em) {
+                .content {
+                  align-items: start;
+                  grid-template-columns: auto 20em;
+                }
+                .items {
+                  order: -1;
+                }
+                .form {
+                  position: sticky;
+                  top: 1em;
+                  align-self: start;
+                }
+              }
+            }
+            .content {
               display: grid;
-              grid-template-columns: auto 20em;
-              grid-gap: 0 1em;
-              align-items: start;
+              gap: 3em;
             }
             .form {
-              position: sticky;
-              top: 1em;
-              align-self: start;
-
+              scroll-margin-block-start: 1em;
+              
               .fields {
                 display: grid;
                 grid-template-columns: 7em auto;
@@ -443,7 +460,6 @@
               }
             }
             .items {
-              order: -1;
               display: grid;
               grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
               grid-gap: 2em 1em;
@@ -458,20 +474,19 @@
                 gap: 0.5em;
               }
 
-              .actions {
-                display: flex;
-                justify-content: end;
-                gap: 0.5em;
-              }
-
               billettautomat-ticket {
                 box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
                 flex: 1;
               }
             }
             .actions {
-              grid-column: 1 / -1;
-              margin-block-start: 2em;
+              display: flex;
+              justify-content: end;
+              gap: 0.5em;
+
+              &.actions--global {
+                grid-column: 1 / -1;
+              }
             }
           `;
           this.shadow.appendChild(style);
@@ -609,6 +624,10 @@
               }
             }
           }
+
+          this.form.scrollIntoView({
+            behavior: "smooth",
+          });
         }
       }
       customElements.define("billettautomat-app", App);
