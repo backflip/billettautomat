@@ -17,6 +17,15 @@
     <billett-automat> </billett-automat>
 
     <script type="module">
+      /**
+       * Syntax highlighting for tagged template literals
+       * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw#building_an_identity_tag
+       * Combined with https://marketplace.visualstudio.com/items?itemName=Tobermory.es6-string-html, e.g.
+       */
+      const html = (strings, ...values) =>
+        String.raw({ raw: strings }, ...values);
+      const css = html;
+
       class Billet extends HTMLElement {
         static observedAttributes = [
           "date",
@@ -42,12 +51,18 @@
 
           // Styles
           const style = document.createElement("style");
-          style.textContent = `
+          style.textContent = css`
             :host {
               --color: ${this.getAttribute("color") || "#FFC62A"};
 
               display: block;
-              background: linear-gradient(to bottom, #fff, #fff 50%, var(--color) 50%, var(--color));
+              background: linear-gradient(
+                to bottom,
+                #fff,
+                #fff 50%,
+                var(--color) 50%,
+                var(--color)
+              );
               font-family: sans-serif;
               padding: 0.5em 0.5em;
             }
@@ -58,12 +73,12 @@
               grid-template-columns: 1fr 1fr;
             }
             dt {
-              clip: rect(0 0 0 0); 
+              clip: rect(0 0 0 0);
               clip-path: inset(50%);
               height: 1px;
               overflow: hidden;
               position: absolute;
-              white-space: nowrap; 
+              white-space: nowrap;
               width: 1px;
             }
             dd {
@@ -102,12 +117,12 @@
               padding: 0.25em 1em 0.675em;
 
               span {
-                clip: rect(0 0 0 0); 
+                clip: rect(0 0 0 0);
                 clip-path: inset(50%);
                 height: 1px;
                 overflow: hidden;
                 position: absolute;
-                white-space: nowrap; 
+                white-space: nowrap;
                 width: 1px;
               }
 
@@ -169,7 +184,7 @@
             return;
           }
 
-          this.content.innerHTML = `
+          this.content.innerHTML = html`
             <dl>
               <dt>Datum</dt>
               <dd class="date">${this.getAttribute("date")}</dd>
@@ -182,11 +197,13 @@
               <dt>Zielort</dt>
               <dd class="destination">${this.getAttribute("destination")}</dd>
               <dt>Richtung</dt>
-              <dd class="direction destination--${
-                this.getAttribute("direction") === "Retourfahrt"
+              <dd
+                class="direction destination--${this.getAttribute(
+                  "direction"
+                ) === "Retourfahrt"
                   ? "return"
-                  : "oneway"
-              }">
+                  : "oneway"}"
+              >
                 <span>${this.getAttribute("direction")}</span>
               </dd>
               <dt>Klasse</dt>
@@ -218,7 +235,7 @@
         connectedCallback() {
           this.shadow = this.attachShadow({ mode: "open" });
 
-          this.shadow.innerHTML = `
+          this.shadow.innerHTML = html`
             <form class="form">
               <div class="fields">
                 <div>
@@ -227,11 +244,22 @@
                 </div>
                 <div>
                   <label for="destination">Zielort</label>
-                  <input type="text" name="destination" id="destination" required />
+                  <input
+                    type="text"
+                    name="destination"
+                    id="destination"
+                    required
+                  />
                 </div>
                 <div>
                   <label for="color">Farbe</label>
-                  <input type="color" name="color" id="color" required value="#FFC62A" />
+                  <input
+                    type="color"
+                    name="color"
+                    id="color"
+                    required
+                    value="#FFC62A"
+                  />
                 </div>
                 <div>
                   <label for="price">Preis</label>
@@ -249,11 +277,22 @@
                     <legend>Klasse</legend>
                     <div>
                       <div>
-                        <input type="radio" name="class" id="class2" value="2. Kl" checked />
+                        <input
+                          type="radio"
+                          name="class"
+                          id="class2"
+                          value="2. Kl"
+                          checked
+                        />
                         <label for="class2">2. Klasse</label>
                       </div>
                       <div>
-                        <input type="radio" name="class" id="class1" value="1. Kl" />
+                        <input
+                          type="radio"
+                          name="class"
+                          id="class1"
+                          value="1. Kl"
+                        />
                         <label for="class1">1. Klasse</label>
                       </div>
                     </div>
@@ -262,11 +301,22 @@
                     <legend>Richtung</legend>
                     <div>
                       <div>
-                        <input type="radio" name="direction" id="direction1" value="Einfache Fahrt" />
+                        <input
+                          type="radio"
+                          name="direction"
+                          id="direction1"
+                          value="Einfache Fahrt"
+                        />
                         <label for="direction1">Einfache Fahrt</label>
                       </div>
                       <div>
-                        <input type="radio" name="direction" id="direction2" value="Retourfahrt" checked />
+                        <input
+                          type="radio"
+                          name="direction"
+                          id="direction2"
+                          value="Retourfahrt"
+                          checked
+                        />
                         <label for="direction2">Retourfahrt</label>
                       </div>
                     </div>
@@ -275,11 +325,22 @@
                     <legend>Typ</legend>
                     <div>
                       <div>
-                        <input type="radio" name="type" id="type1" value="1/2 Preis" checked />
+                        <input
+                          type="radio"
+                          name="type"
+                          id="type1"
+                          value="1/2 Preis"
+                          checked
+                        />
                         <label for="type1">1/2 Preis</label>
                       </div>
                       <div>
-                        <input type="radio" name="type" id="type2" value="1/1 Preis" />
+                        <input
+                          type="radio"
+                          name="type"
+                          id="type2"
+                          value="1/1 Preis"
+                        />
                         <label for="type2">1/1 Preis</label>
                       </div>
                     </div>
@@ -313,7 +374,7 @@
 
           // Styles
           const style = document.createElement("style");
-          style.textContent = `
+          style.textContent = css`
             :host {
               display: grid;
               grid-template-columns: auto 20em;
