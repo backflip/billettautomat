@@ -14,7 +14,7 @@
   </head>
   <body>
     <h1>Billettautomat</h1>
-    <billett-automat> </billett-automat>
+    <billettautomat-app> </billettautomat-app>
 
     <script type="module">
       /**
@@ -26,7 +26,10 @@
         String.raw({ raw: strings }, ...values);
       const css = html;
 
-      class Billet extends HTMLElement {
+      /**
+       * Single ticket
+       */
+      class Ticket extends HTMLElement {
         static observedAttributes = [
           "date",
           "type",
@@ -227,9 +230,12 @@
           this.render();
         }
       }
-      customElements.define("billett-item", Billet);
+      customElements.define("billettautomat-ticket", Ticket);
 
-      class BilletAutomat extends HTMLElement {
+      /**
+       * Ticketing app
+       */
+      class App extends HTMLElement {
         #items = [];
 
         connectedCallback() {
@@ -505,7 +511,7 @@
           this.#items.forEach((item, index) => {
             const wrapper = document.createElement("li");
 
-            const billet = document.createElement("billett-item");
+            const billet = document.createElement("billettautomat-ticket");
 
             for (const [key, value] of Object.entries(item)) {
               billet.setAttribute(key, value);
@@ -531,7 +537,7 @@
           this.update();
         }
       }
-      customElements.define("billett-automat", BilletAutomat);
+      customElements.define("billettautomat-app", App);
     </script>
   </body>
 </html>
