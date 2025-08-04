@@ -50,6 +50,7 @@
 
           // Content container
           this.content = document.createElement("div");
+          this.content.classList.add("content");
           this.shadow.appendChild(this.content);
 
           // Styles
@@ -58,7 +59,8 @@
             :host {
               --color: ${this.getAttribute("color") || "#FFC62A"};
 
-              display: block;
+              display: flex;
+              flex-direction: column;
               background: linear-gradient(
                 to bottom,
                 #fff,
@@ -69,11 +71,22 @@
               font-family: sans-serif;
               padding: 0.5em 0.5em;
             }
+            .content {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
 
+            }
             dl {
+              flex: 1;
               margin: 0;
               display: grid;
-              grid-template-columns: 1fr 1fr;
+              grid-template-rows: 1fr 1fr;
+
+              > * {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+              }
             }
             dt {
               clip: rect(0 0 0 0);
@@ -108,16 +121,17 @@
             }
             .destination {
               font-size: 1.25em;
-              margin-block-end: 1em;
+              margin-block-end: 0.5em;
             }
             .direction {
+              margin-block-start: 0.5em;
               margin-block-end: 1em;
               margin-inline: 1em;
               background: #000;
               display: flex;
               flex-direction: column;
               gap: 0.25em;
-              padding: 0.25em 1em 0.675em;
+              padding: 0.45em 1em;
 
               span {
                 clip: rect(0 0 0 0);
@@ -136,7 +150,7 @@
               }
 
               &.destination--return {
-                padding: 0.1em 1em 0.5em;
+                padding: 0.25em 1em;
 
                 &::after {
                   content: "⟵";
@@ -173,6 +187,7 @@
             }
             .number3 {
               margin-block-start: 0.5em;
+              margin-block-end: -0.25em;
               font-size: 1.5em;
               letter-spacing: 0.2em;
             }
@@ -189,39 +204,45 @@
 
           this.content.innerHTML = html`
             <dl>
-              <dt>Datum</dt>
-              <dd class="date">${this.getAttribute("date")}</dd>
-              <dt>Typ</dt>
-              <dd class="type">${this.getAttribute("type")}</dd>
-              <dt>Gültigkeit</dt>
-              <dd class="validity">Gültig ${this.getAttribute("validity")}</dd>
-              <dt>Abfahrtsort</dt>
-              <dd class="origin">${this.getAttribute("origin")}</dd>
-              <dt>Zielort</dt>
-              <dd class="destination">${this.getAttribute("destination")}</dd>
-              <dt>Richtung</dt>
-              <dd
-                class="direction destination--${this.getAttribute(
-                  "direction"
-                ) === "Retourfahrt"
-                  ? "return"
-                  : "oneway"}"
-              >
-                <span>${this.getAttribute("direction")}</span>
-              </dd>
-              <dt>Klasse</dt>
-              <dd class="class">${this.getAttribute("class")}</dd>
-              <dt>Preis</dt>
-              <dd class="price">
-                ${this.getAttribute("price")}
-                <small>${this.getAttribute("price")}</small>
-              </dd>
-              <dt>Nummer 1</dt>
-              <dd class="number1">${this.getAttribute("number1")}</dd>
-              <dt>Nummer 2</dt>
-              <dd class="number2">${this.getAttribute("number2")}</dd>
-              <dt>Nummer 3</dt>
-              <dd class="number3">${this.getAttribute("number3")}</dd>
+              <div class="group">
+                <dt>Datum</dt>
+                <dd class="date">${this.getAttribute("date")}</dd>
+                <dt>Typ</dt>
+                <dd class="type">${this.getAttribute("type")}</dd>
+                <dt>Gültigkeit</dt>
+                <dd class="validity">
+                  Gültig ${this.getAttribute("validity")}
+                </dd>
+                <dt>Abfahrtsort</dt>
+                <dd class="origin">${this.getAttribute("origin")}</dd>
+                <dt>Zielort</dt>
+                <dd class="destination">${this.getAttribute("destination")}</dd>
+              </div>
+              <div class="group">
+                <dt>Richtung</dt>
+                <dd
+                  class="direction destination--${this.getAttribute(
+                    "direction"
+                  ) === "Retourfahrt"
+                    ? "return"
+                    : "oneway"}"
+                >
+                  <span>${this.getAttribute("direction")}</span>
+                </dd>
+                <dt>Klasse</dt>
+                <dd class="class">${this.getAttribute("class")}</dd>
+                <dt>Preis</dt>
+                <dd class="price">
+                  ${this.getAttribute("price")}
+                  <small>${this.getAttribute("price")}</small>
+                </dd>
+                <dt>Nummer 1</dt>
+                <dd class="number1">${this.getAttribute("number1")}</dd>
+                <dt>Nummer 2</dt>
+                <dd class="number2">${this.getAttribute("number2")}</dd>
+                <dt>Nummer 3</dt>
+                <dd class="number3">${this.getAttribute("number3")}</dd>
+              </div>
             </dl>
           `;
         }
@@ -385,6 +406,7 @@
               display: grid;
               grid-template-columns: auto 20em;
               grid-gap: 0 1em;
+              align-items: start;
             }
             .form {
               position: sticky;
@@ -433,6 +455,7 @@
 
               billettautomat-ticket {
                 box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
+                flex: 1;
               }
             }
             .actions {
