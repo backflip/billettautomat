@@ -439,7 +439,7 @@
             }
             .form {
               scroll-margin-block-start: 1em;
-              
+
               .fields {
                 display: grid;
                 grid-template-columns: 7em auto;
@@ -611,6 +611,11 @@
         }
 
         editItem(index) {
+          this.form.scrollIntoView({
+            behavior: "smooth",
+          });
+          this.form.querySelector("[name='origin']").focus();
+
           const item = this.#items[index];
 
           for (const [key, value] of Object.entries({ ...item, index })) {
@@ -624,10 +629,6 @@
               }
             }
           }
-
-          this.form.scrollIntoView({
-            behavior: "smooth",
-          });
         }
       }
       customElements.define("billettautomat-app", App);
