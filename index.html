@@ -27,6 +27,24 @@
       const css = html;
 
       /**
+       * Visually hidden elements
+       */
+      class VisuallyHidden extends HTMLElement {
+        connectedCallback() {
+          this.style.position = "absolute";
+          this.style.width = "1px";
+          this.style.height = "1px";
+          this.style.padding = "0";
+          this.style.border = "0";
+          this.style.overflow = "hidden";
+          this.style.clip = "rect(0 0 0 0)";
+          this.style.clipPath = "inset(50%)";
+          this.style.whiteSpace = "nowrap";
+        }
+      }
+      customElements.define("visually-hidden", VisuallyHidden);
+
+      /**
        * Single ticket
        */
       class Ticket extends HTMLElement {
@@ -71,7 +89,12 @@
               font-family: sans-serif;
               padding: 0.5em 0.5em;
             }
-            .visually-hidden {
+            .content {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+            }
+            dt {
               clip: rect(0 0 0 0);
               clip-path: inset(50%);
               height: 1px;
@@ -79,11 +102,6 @@
               position: absolute;
               white-space: nowrap;
               width: 1px;
-            }
-            .content {
-              flex: 1;
-              display: flex;
-              flex-direction: column;
             }
             dl {
               flex: 1;
@@ -194,21 +212,21 @@
           this.content.innerHTML = html`
             <dl>
               <div class="group">
-                <dt class="visually-hidden">Datum</dt>
+                <dt>Datum</dt>
                 <dd class="date">${this.getAttribute("date")}</dd>
-                <dt class="visually-hidden">Typ</dt>
+                <dt>Typ</dt>
                 <dd class="type">${this.getAttribute("type")}</dd>
-                <dt class="visually-hidden">Gültigkeit</dt>
+                <dt>Gültigkeit</dt>
                 <dd class="validity">
                   Gültig ${this.getAttribute("validity")}
                 </dd>
-                <dt class="visually-hidden">Abfahrtsort</dt>
+                <dt>Abfahrtsort</dt>
                 <dd class="origin">${this.getAttribute("origin")}</dd>
-                <dt class="visually-hidden">Zielort</dt>
+                <dt>Zielort</dt>
                 <dd class="destination">${this.getAttribute("destination")}</dd>
               </div>
               <div class="group">
-                <dt class="visually-hidden">Richtung</dt>
+                <dt>Richtung</dt>
                 <dd
                   class="direction destination--${this.getAttribute(
                     "direction"
@@ -216,22 +234,22 @@
                     ? "return"
                     : "oneway"}"
                 >
-                  <span class="visually-hidden"
-                    >${this.getAttribute("direction")}</span
+                  <visually-hidden
+                    >${this.getAttribute("direction")}</visually-hidden
                   >
                 </dd>
-                <dt class="visually-hidden">Klasse</dt>
+                <dt>Klasse</dt>
                 <dd class="class">${this.getAttribute("class")}</dd>
-                <dt class="visually-hidden">Preis</dt>
+                <dt>Preis</dt>
                 <dd class="price">
                   ${this.getAttribute("price")}
                   <small>${this.getAttribute("price")}</small>
                 </dd>
-                <dt class="visually-hidden">Nummer 1</dt>
+                <dt>Nummer 1</dt>
                 <dd class="number1">${this.getAttribute("number1")}</dd>
-                <dt class="visually-hidden">Nummer 2</dt>
+                <dt>Nummer 2</dt>
                 <dd class="number2">${this.getAttribute("number2")}</dd>
-                <dt class="visually-hidden">Nummer 3</dt>
+                <dt>Nummer 3</dt>
                 <dd class="number3">${this.getAttribute("number3")}</dd>
               </div>
             </dl>
@@ -255,6 +273,7 @@
 
           this.shadow.innerHTML = html`
             <form class="form">
+              <input type="hidden" name="index" />
               <div class="fields">
                 <div>
                   <label for="origin">Abfahrtsort</label>
@@ -368,16 +387,16 @@
                     <input type="text" name="validity" id="validity" />
                   </div>
                   <div>
-                    <label for="number1">ID 1</label>
-                    <input type="number3" name="number1" id="number1" />
+                    <label for="number1">Nummer 1</label>
+                    <input type="number" name="number1" id="number1" />
                   </div>
                   <div>
-                    <label for="number3">ID 2</label>
-                    <input type="number3" name="number3" id="number3" />
+                    <label for="number2">Nummer 2</label>
+                    <input type="number" name="number2" id="number2" />
                   </div>
                   <div>
-                    <label for="number3">Nummer</label>
-                    <input type="number3" name="number3" id="number3" />
+                    <label for="number3">Nummer 3</label>
+                    <input type="number" name="number3" id="number3" />
                   </div>
                 </div>
               </details>
@@ -439,9 +458,10 @@
                 gap: 0.5em;
               }
 
-              button {
-                order: -1;
-                align-self: end;
+              .actions {
+                display: flex;
+                justify-content: end;
+                gap: 0.5em;
               }
 
               billettautomat-ticket {
@@ -462,19 +482,27 @@
             event.preventDefault();
 
             const formData = new FormData(this.form);
-            const data = Object.fromEntries(formData.entries());
-
-            this.#items.unshift({
+            const { index, ...data } = Object.fromEntries(formData.entries());
+            const item = {
               ...data,
               price: parseFloat(data.price).toFixed(2).padStart(6, "0"),
               date: data.date || new Date().toISOString().split("T")[0],
               validity: data.validity || "1 Monat",
               number1: data.number1 || Math.floor(Math.random() * 1000000),
-              number2: data.number3 || Math.floor(Math.random() * 10000),
+              number2: data.number2 || Math.floor(Math.random() * 10000),
               number3: data.number3 || Math.floor(Math.random() * 10000),
-            });
+            };
+
+            if (index) {
+              this.#items[index] = item;
+            } else {
+              this.#items.unshift(item);
+            }
 
             this.update();
+
+            this.form.reset();
+            this.form.querySelector("[name='index']").value = "";
           });
 
           this.#items = JSON.parse(
@@ -525,6 +553,12 @@
           this.#items.forEach((item, index) => {
             const wrapper = document.createElement("li");
 
+            const actions = document.createElement("div");
+
+            actions.classList.add("actions");
+
+            wrapper.appendChild(actions);
+
             const billet = document.createElement("billettautomat-ticket");
 
             for (const [key, value] of Object.entries(item)) {
@@ -533,13 +567,23 @@
 
             wrapper.appendChild(billet);
 
+            const editButton = document.createElement("button");
+
+            editButton.innerHTML = html`<span role="presentation">✎</span
+              ><visually-hidden>Bearbeiten</visually-hidden>`;
+            editButton.addEventListener("click", () => this.editItem(index));
+
+            actions.appendChild(editButton);
+
             const removeButton = document.createElement("button");
-            removeButton.textContent = "Entfernen";
+
+            removeButton.innerHTML = html`<span role="presentation">✕</span
+              ><visually-hidden>Entfernen</visually-hidden>`;
             removeButton.addEventListener("click", () =>
               this.removeItem(index)
             );
 
-            wrapper.appendChild(removeButton);
+            actions.appendChild(removeButton);
 
             this.items.appendChild(wrapper);
           });
@@ -549,6 +593,22 @@
           this.#items.splice(index, 1);
 
           this.update();
+        }
+
+        editItem(index) {
+          const item = this.#items[index];
+
+          for (const [key, value] of Object.entries({ ...item, index })) {
+            const input = this.form.querySelector(`[name="${key}"]`);
+
+            if (input) {
+              if (input.type === "radio") {
+                input.checked = input.value === value;
+              } else {
+                input.value = value;
+              }
+            }
+          }
         }
       }
       customElements.define("billettautomat-app", App);
