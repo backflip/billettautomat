@@ -76,6 +76,7 @@
        * Single ticket
        */
       class Ticket extends HTMLElement {
+        /** @type {Array<keyof Item>} */
         static observedAttributes = [
           "date",
           "type",
@@ -294,6 +295,85 @@
        * Ticketing app
        */
       class App extends HTMLElement {
+        #fields = [
+          {
+            type: "text",
+            name: "origin",
+            label: "Abfahrtsort",
+            required: true,
+          },
+          {
+            type: "text",
+            name: "destination",
+            label: "Zielort",
+            required: true,
+          },
+          {
+            type: "color",
+            name: "color",
+            label: "Farbe",
+            required: true,
+            value: "#FFC62A",
+          },
+          {
+            type: "number",
+            name: "price",
+            label: "Preis",
+            required: true,
+          },
+          {
+            type: "date",
+            name: "date",
+            label: "Datum",
+          },
+          {
+            type: "radio",
+            name: "class",
+            label: "Klasse",
+            options: [
+              { value: "2. Kl", label: "2. Klasse", checked: true },
+              { value: "1. Kl", label: "1. Klasse" },
+            ],
+          },
+          {
+            type: "radio",
+            name: "direction",
+            label: "Richtung",
+            options: [
+              { value: "Einfache Fahrt", label: "Einfache Fahrt" },
+              { value: "Retourfahrt", label: "Retourfahrt", checked: true },
+            ],
+          },
+          {
+            type: "radio",
+            name: "type",
+            label: "Typ",
+            options: [
+              { value: "1/2 Preis", label: "1/2 Preis", checked: true },
+              { value: "1/1 Preis", label: "1/1 Preis" },
+            ],
+          },
+          {
+            type: "text",
+            name: "validity",
+            label: "Gültigkeit",
+          },
+          {
+            type: "text",
+            name: "number1",
+            label: "Nummer 1",
+          },
+          {
+            type: "text",
+            name: "number2",
+            label: "Nummer 2",
+          },
+          {
+            type: "text",
+            name: "number3",
+            label: "Nummer 3",
+          },
+        ];
         /** @type {Item[]} */
         #items = [];
         /** @type {HTMLFormElement} */
@@ -313,129 +393,18 @@
               <form class="form">
                 <input type="hidden" name="index" />
                 <div class="fields">
-                  <div>
-                    <label for="origin">Abfahrtsort</label>
-                    <input type="text" name="origin" id="origin" required />
-                  </div>
-                  <div>
-                    <label for="destination">Zielort</label>
-                    <input
-                      type="text"
-                      name="destination"
-                      id="destination"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label for="color">Farbe</label>
-                    <input
-                      type="color"
-                      name="color"
-                      id="color"
-                      required
-                      value="${this.#items[0]?.color || "#FFC62A"}"
-                    />
-                  </div>
-                  <div>
-                    <label for="price">Preis</label>
-                    <input type="number" name="price" id="price" required />
-                  </div>
+                  ${this.#fields
+                    .filter((field) => field.required)
+                    .map((field) => this.getField(field))
+                    .join("")}
                 </div>
                 <details>
                   <summary>Erweiterte Optionen</summary>
                   <div class="fields">
-                    <div>
-                      <label for="date">Datum</label>
-                      <input type="date" name="date" id="date" />
-                    </div>
-                    <fieldset>
-                      <legend>Klasse</legend>
-                      <div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="class"
-                            id="class2"
-                            value="2. Kl"
-                            checked
-                          />
-                          <label for="class2">2. Klasse</label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="class"
-                            id="class1"
-                            value="1. Kl"
-                          />
-                          <label for="class1">1. Klasse</label>
-                        </div>
-                      </div>
-                    </fieldset>
-                    <fieldset>
-                      <legend>Richtung</legend>
-                      <div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="direction"
-                            id="direction1"
-                            value="Einfache Fahrt"
-                          />
-                          <label for="direction1">Einfache Fahrt</label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="direction"
-                            id="direction2"
-                            value="Retourfahrt"
-                            checked
-                          />
-                          <label for="direction2">Retourfahrt</label>
-                        </div>
-                      </div>
-                    </fieldset>
-                    <fieldset>
-                      <legend>Typ</legend>
-                      <div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="type"
-                            id="type1"
-                            value="1/2 Preis"
-                            checked
-                          />
-                          <label for="type1">1/2 Preis</label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="type"
-                            id="type2"
-                            value="1/1 Preis"
-                          />
-                          <label for="type2">1/1 Preis</label>
-                        </div>
-                      </div>
-                    </fieldset>
-                    <div>
-                      <label for="validity">Gültigkeit</label>
-                      <input type="text" name="validity" id="validity" />
-                    </div>
-                    <div>
-                      <label for="number1">Nummer 1</label>
-                      <input type="number" name="number1" id="number1" />
-                    </div>
-                    <div>
-                      <label for="number2">Nummer 2</label>
-                      <input type="number" name="number2" id="number2" />
-                    </div>
-                    <div>
-                      <label for="number3">Nummer 3</label>
-                      <input type="number" name="number3" id="number3" />
-                    </div>
+                    ${this.#fields
+                      .filter((field) => !field.required)
+                      .map((field) => this.getField(field))
+                      .join("")}
                   </div>
                 </details>
                 <button type="submit">Erstellen</button>
@@ -626,6 +595,41 @@
           localStorage.setItem("billett-automat", JSON.stringify(this.#items));
 
           this.render();
+        }
+
+        getField(field) {
+          if (field.options) {
+            return html`<fieldset>
+              <legend>${field.label}</legend>
+              <div>
+                ${field.options
+                  .map(
+                    (option, index) => html` <div>
+                      <input
+                        type="radio"
+                        name="${field.name}"
+                        id="${field.name}${index}"
+                        value="${option.value}"
+                        ${option.checked ? "checked" : ""}
+                      />
+                      <label for="${field.name}${index}">${option.label}</label>
+                    </div>`
+                  )
+                  .join("")}
+              </div>
+            </fieldset>`;
+          }
+
+          return html`<div>
+            <label for="${field.name}">${field.label}</label>
+            <input
+              type="${field.type}"
+              name="${field.name}"
+              id="${field.name}"
+              ${field.required ? "required" : ""}
+              value="${field.value || ""}"
+            />
+          </div>`;
         }
 
         render() {
