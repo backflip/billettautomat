@@ -108,20 +108,34 @@
 
               display: flex;
               flex-direction: column;
-              background: linear-gradient(
-                to bottom,
-                #fff,
-                #fff 50%,
-                var(--color) 50%,
-                var(--color)
-              );
               font-family: sans-serif;
-              padding: 0.5em 0.5em;
             }
             .content {
               flex: 1;
               display: flex;
               flex-direction: column;
+            }
+            .group {
+              padding: 0.5em;
+
+              &:nth-child(1) {
+                padding-block-end: 0;
+              }
+
+              &:nth-child(2) {
+                padding-block-start: 0;
+                background: var(--color);
+
+                /* https://lea.verou.me/blog/2024/contrast-color/ */
+                @supports (color: oklch(from red l c h)) {
+                  --l-threshold: 0.7;
+                  --l: clamp(0, (l / var(--l-threshold) - 1) * -infinity, 1);
+                  color: oklch(from var(--color) var(--l) 0 h);
+                }
+                @supports (color: contrast-color(red)) {
+                  color: contrast-color(var(--color));
+                }
+              }
             }
             dt {
               clip: rect(0 0 0 0);
