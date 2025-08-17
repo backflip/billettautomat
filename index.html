@@ -11,6 +11,15 @@
         padding: 1em;
         background-color: #fff;
       }
+
+      @media print {
+        body {
+          print-color-adjust: exact;
+        }
+        h1 {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -518,12 +527,13 @@
             }
 
             @media print {
-              :host {
-                print-color-adjust: exact;
-              }
               .form,
               .actions {
                 display: none;
+              }
+              /* Firefox */
+              .content {
+                display: block;
               }
               .items {
                 grid-template-columns: repeat(4, 1fr);
