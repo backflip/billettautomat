@@ -18,6 +18,24 @@
     <billettautomat-app> </billettautomat-app>
 
     <script type="module">
+      // @ts-check
+
+      /**
+       * @typedef Item
+       * @property {string} origin
+       * @property {string} destination
+       * @property {string} color
+       * @property {string} price
+       * @property {string} date
+       * @property {string} class
+       * @property {string} direction
+       * @property {string} type
+       * @property {string} validity
+       * @property {number} number1
+       * @property {number} number2
+       * @property {number} number3
+       */
+
       /**
        * Syntax highlighting for tagged template literals
        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw#building_an_identity_tag
@@ -267,7 +285,12 @@
        * Ticketing app
        */
       class App extends HTMLElement {
+        /** @type {Item[]} */
         #items = [];
+        /** @type {HTMLFormElement} */
+        form;
+        /** @type {HTMLFormElement} */
+        items;
 
         connectedCallback() {
           this.#items = JSON.parse(
@@ -306,7 +329,7 @@
                   </div>
                   <div>
                     <label for="price">Preis</label>
-                    <input type="number3" name="price" id="price" required />
+                    <input type="number" name="price" id="price" required />
                   </div>
                 </div>
                 <details>
@@ -496,25 +519,42 @@
           `;
           this.shadow.appendChild(style);
 
+          // @ts-expect-error
           this.items = this.shadow.querySelector(".items");
+          // @ts-expect-error
           this.form = this.shadow.querySelector(".form");
           this.form.addEventListener("submit", (event) => {
             event.preventDefault();
 
             const formData = new FormData(this.form);
             const { index, ...data } = Object.fromEntries(formData.entries());
+            /** @type {Item} */
             const item = {
-              ...data,
-              price: parseFloat(data.price).toFixed(2).padStart(6, "0"),
-              date: data.date || new Date().toISOString().split("T")[0],
-              validity: data.validity || "1 Monat",
-              number1: data.number1 || Math.floor(Math.random() * 1000000),
-              number2: data.number2 || Math.floor(Math.random() * 10000),
-              number3: data.number3 || Math.floor(Math.random() * 10000),
+              origin: data.origin?.toString() || "",
+              destination: data.destination?.toString() || "",
+              color: data.color?.toString() || "",
+              price: (data.price ? Number(data.price) : 1)
+                .toFixed(2)
+                .padStart(6, "0"),
+              date:
+                data.date?.toString() || new Date().toISOString().split("T")[0],
+              class: data.class?.toString() || "",
+              direction: data.direction?.toString() || "",
+              type: data.type?.toString() || "",
+              validity: data.validity?.toString() || "1 Monat",
+              number1: data.number1
+                ? Number(data.number1)
+                : Math.floor(Math.random() * 1000000),
+              number2: data.number2
+                ? Number(data.number2)
+                : Math.floor(Math.random() * 10000),
+              number3: data.number3
+                ? Number(data.number3)
+                : Math.floor(Math.random() * 10000),
             };
 
             if (index) {
-              this.#items[index] = item;
+              this.#items[Number(index.toString())] = item;
             } else {
               this.#items.unshift(item);
             }
@@ -522,7 +562,9 @@
             this.update();
 
             this.form.reset();
-            this.form.querySelector("[name='index']").value = "";
+            /** @type {HTMLInputElement} */ (
+              this.form.querySelector("[name='index']")
+            ).value = "";
           });
 
           this.shadow.addEventListener("click", this);
@@ -578,7 +620,7 @@
             const billet = document.createElement("billettautomat-ticket");
 
             for (const [key, value] of Object.entries(item)) {
-              billet.setAttribute(key, value);
+              billet.setAttribute(key, String(value));
             }
 
             wrapper.appendChild(billet);
@@ -615,11 +657,14 @@
           this.form.scrollIntoView({
             behavior: "smooth",
           });
-          this.form.querySelector("[name='origin']").focus();
+          /** @type {HTMLInputElement} */ (
+            this.form.querySelector("[name='origin']")
+          ).focus();
 
           const item = this.#items[index];
 
           for (const [key, value] of Object.entries({ ...item, index })) {
+            /** @type {HTMLInputElement | null} */
             const input = this.form.querySelector(`[name="${key}"]`);
 
             if (input) {
