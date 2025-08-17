@@ -516,6 +516,19 @@
                 grid-column: 1 / -1;
               }
             }
+
+            @media print {
+              :host {
+                print-color-adjust: exact;
+              }
+              .form,
+              .actions {
+                display: none;
+              }
+              .items {
+                grid-template-columns: repeat(4, 1fr);
+              }
+            }
           `;
           this.shadow.appendChild(style);
 
